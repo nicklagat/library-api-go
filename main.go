@@ -21,6 +21,7 @@ func main() {
 
 	router.GET("/books", getAllBooks)
 	router.POST("/books", createBook)
+	router.GET("/books/:id", getBook)
 
 	err := router.Run(":8080")
 	if err != nil {
@@ -52,4 +53,16 @@ func createBook(c *gin.Context) {
 	books[book.ID] = book
 
 	c.JSON(http.StatusCreated, book)
+}
+
+func getBook(c *gin.Context) {
+	bookID := c.Param("id")
+	book, exists := books[bookID]
+
+	if !exists {
+		c.JSON(http.StatusNotFound, gin.H{"error": "book not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, book)
 }
